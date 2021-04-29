@@ -18,8 +18,6 @@ struct dist {
 	char *getPkgCount;
 };
 
-struct sysinfo systeminfo;
-
 char *username, *shellname, *pkgcount;
 long uptimeHour, uptimeMin;
 struct dist info = { 
@@ -36,11 +34,6 @@ struct dist info = {
 "        O      *        '       .",
 "                    .",
 };
-void *operatingsystem()
-{
-    std::cout << "OS:       OpenSUSE Tumbleweed" << std::endl;
-    return 0;
-}
 
 void *name()
 {
@@ -61,12 +54,14 @@ void *shell()
 }
 void *os()
 {
-    sysinfo(&systeminfo);
     
 }
-inline std::string uptime()
+void *kernel()
 {
-    return "uptime --pretty";
+    struct utsname kernel;
+    if(uname(&kernel)) exit(-1);
+    std::cout << "Kernel:   " << kernel.release << std::endl;
+    return 0;
 }
 
 int main() {
@@ -81,11 +76,8 @@ int main() {
     std::cout << info.col9 << std::endl;
     std::cout << info.col10 << std::endl;
     std::cout << info.col11 << std::endl;
-
-    operatingsystem();
     name();
     shell();
-    uptime();
-    std::cout << "Uptime:   " << uptime() << std::endl;
+    kernel();
     return 0;
 }
