@@ -18,6 +18,7 @@ struct dist {
 	char *getPkgCount;
 };
 
+struct utsname uname_info;
 char *username, *shellname, *pkgcount;
 long uptimeHour, uptimeMin;
 struct dist info = { 
@@ -35,14 +36,14 @@ struct dist info = {
 "                    .",
 };
 
-void *name()
+static std::string *name()
 {
     username = cuserid(username);
     std::cout << "User:     " << username << std::endl;
     return 0;
 }
 
-void *shell()
+static std::string *shell()
 {
     char* shellname = getpwuid(geteuid())->pw_shell;
     char* slash = strrchr(shellname, '/');
@@ -52,11 +53,14 @@ void *shell()
     std::cout << "Shell:    " << shellname << std::endl;
     return 0;
 }
-void *os()
-{
-    
+
+static std::string *get_os() {
+    struct utsname os;
+    if(uname(&os)) exit(-1);
+    std::cout << "OS:       " << os.sysname << " " << os.machine << std::endl;
+    return 0;
 }
-void *kernel()
+static std::string *kernel()
 {
     struct utsname kernel;
     if(uname(&kernel)) exit(-1);
@@ -77,7 +81,9 @@ int main() {
     std::cout << info.col10 << std::endl;
     std::cout << info.col11 << std::endl;
     name();
+    get_os();
     shell();
+    uptime();
     kernel();
     return 0;
 }
