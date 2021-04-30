@@ -16,11 +16,10 @@
 
 struct dist {
 	char *col1, *col2, *col3, *col4, *col5, *col6, *col7, *col8, *col9, *col10, *col11;
-	char *getPkgCount;
 };
 
 struct utsname uname_info;
-char *username, *shellname, *pkgcount;
+char *username, *shellname;
 long uptimeHour, uptimeMin;
 std::string info[] = { 
 "            ~+",
@@ -36,6 +35,7 @@ std::string info[] = {
 "        O      *        '       .",
 "                    .",
 };
+
 void printout(std::string array[], int size)
 {
     static int i;
@@ -58,7 +58,7 @@ static std::string *name()
 
 static std::string *shell()
 {
-    char* shellname = getpwuid(geteuid())->pw_shell;
+    shellname = getpwuid(geteuid())->pw_shell;
     char* slash = strrchr(shellname, '/');
 	if (slash) {
 		shellname = slash + 1;
@@ -67,30 +67,30 @@ static std::string *shell()
     return 0;
 }
 
-static std::string *get_os() {
-    struct utsname os;
-    if(uname(&os)) exit(-1);
-    std::cout << "OS:       " << os.sysname << " " << os.machine << std::endl;
+static std::string *get_os() 
+{
+    struct utsname uname_info;
+    if(uname(&uname_info)) exit(-1);
+    std::cout << "OS:       " << uname_info.sysname << " " << uname_info.machine << std::endl;
     return 0;
 }
 static std::string *kernel()
 {
-    struct utsname kernel;
-    if(uname(&kernel)) exit(-1);
-    std::cout << "Kernel:   " << kernel.release << " " << std::endl;
+    struct utsname uname_info;
+    if(uname(&uname_info)) exit(-1);
+    std::cout << "Kernel:   " << uname_info.release << std::endl;
     return 0;
 }
-inline std::string uptime()
+static void uptime()
 {
-    FILE* file = fopen("/proc/uptime", "r");
-    if (file == NULL)
-        return 0;
+    FILE *file = fopen("/proc/uptime", "r");
+    if (!file)
+        perror("Couldn't open /proc/uptime'");
     
     double uptime;
     fscanf(file, "%lf", &uptime);
     fclose(file);
     std::cout << "Uptime:   " << round(uptime / 60) << " mins" << std::endl;
-    return 0;
 }
 
 int main() {
@@ -98,9 +98,8 @@ int main() {
     printout(info, size);
     name();
     get_os();
+    kernel();
     shell();
     uptime();
-    kernel();
-    std::cout << "Uptime:   " << uptime() << std::endl;
     return 0;
 }
