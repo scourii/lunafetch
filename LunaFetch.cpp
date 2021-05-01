@@ -12,11 +12,6 @@
 #define CYAN    "\033[36m"      /* Cyan */
 #define WHITE   "\033[37m"      /* White */
 
-
-struct dist {
-	char *col1, *col2, *col3, *col4, *col5, *col6, *col7, *col8, *col9, *col10, *col11;
-};
-
 struct utsname uname_info;
 char *username, *shellname;
 long uptimeHour, uptimeMin;
