@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <sys/utsname.h>
+#include <sys/sysinfo.h>
 #include <iostream>
 #include <pwd.h>
 #include <cmath>
@@ -86,21 +87,47 @@ static std::string *kernel()
     std::cout << CYAN << "Kernel:   " << WHITE << uname_info.release << std::endl;
     return 0;
 }
+size_t ram()
+{
+    char* ram;
+
+    FILE* fp = fopen("/proc/meminfo", "r");
+
+    char tmp[128];
+    char* token, *ptr;
+    size_t total_mem = 0, free_mem = 0, buffers = 0, cached = 0;
+
+    while (fgets(tmp, sizeof(tmp) - 1, fp) != NULL && !(total_mem && free_mem)) {
+        token = strtok(tmp, " ");
+
+        if (!strcmp(token, "MemTotal:")){
+            token = strtok(NULL, " ");
+            total_mem = strtol(token, &ptr, 10);
+        } else if (!strcmp(token, "MemAvailable:")){
+            token = strtok(NULL, " ");
+            free_mem = strtol(token, &ptr, 10);
+        } 
+    }
+
+    asprintf(&ram, "%zi/%zi mib",
+            (total_mem - free_mem - buffers) / 1024, total_mem / 1024);
+    
+    fclose(fp);
+
+    std::cout << CYAN << "Ram:      " << WHITE << ram << std::endl;
+
+    return 0;
+}
+
 static void uptime()
 {
-    FILE *file = fopen("/proc/uptime", "r");
-    if (!file)
-        perror("Couldn't open /proc/uptime'");
-    
+    FILE* file = fopen("/proc/uptime", "r");
+    if (file == NULL)
+        return;
     double uptime;
     fscanf(file, "%lf", &uptime);
     fclose(file);
-    uptimeHour = uptime / 3600;
-    uptimeMin = round(uptime / 180);
-    if (uptimeHour >  1)
-        std::cout << CYAN << "Uptime:   " << WHITE << uptimeMin << " mins" << std::endl;
-    else
-        std::cout << CYAN << "Uptime:   " << WHITE << uptimeHour << " hour " << uptimeMin<< " mins" << std::endl;
+    std::cout << CYAN << "Uptime:   " <<  WHITE << round(uptime / 60) << " mins" << std::endl;
 }
 
 int main() {
@@ -109,6 +136,7 @@ int main() {
     name();
     get_os();
     kernel();
+    ram();
     editor();
     shell();
     uptime();
