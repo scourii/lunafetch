@@ -6,7 +6,7 @@
 #include <cmath>
 #include <unistd.h>
 #include <string.h>
-#include <fstream>
+
 
 // Terminal Colors
 #define CYAN    "\033[36m"      /* Cyan */
@@ -16,23 +16,10 @@ struct utsname uname_info;
 char *username, *shellname;
 long uptimeHour, uptimeMin;
 
-void printout(std::string array[], int size)
-{
-    static int i;
-    if (i == size)
-    {
-        i = 0;
-        std::cout << std::endl;
-        return;
-    }
-    std::cout << array[i] << std::endl;
-    i++;
-    printout(array, size);
-}
 static std::string *name()
 {
     username = cuserid(username);
-    std::cout.width(50); std::cout << std::left << CYAN << "User:     " <<  WHITE << username << std::endl;
+    std::cout << std::left << CYAN << " User:     " <<  WHITE << username << std::endl;
     return 0;
 }
 
@@ -43,14 +30,14 @@ static std::string *shell()
 	if (slash) {
 		shellname = slash + 1;
 	}
-    std::cout.width(50); std::cout << std::left << CYAN << "Shell:    " << WHITE << shellname << std::endl;
+    std::cout << std::left << CYAN << " Shell:    " << WHITE << shellname << std::endl;
     return 0;
 }
 static std::string *editor()
 {
     const char* editor = std::getenv("EDITOR");
     if (editor && *editor) editor = basename(editor);
-        std::cout.width(50); std::cout << std::left << CYAN << "Editor:   " << WHITE << editor << std::endl;
+    std::cout << std::left << CYAN << " Editor:   " << WHITE << editor << std::endl;
     return 0;
 }
 
@@ -58,16 +45,17 @@ static std::string *get_os()
 {
     struct utsname uname_info;
     if(uname(&uname_info)) exit(-1);
-     std::cout.width(50); std::cout << std::left << CYAN << "OS:       " << WHITE << uname_info.sysname << " " << uname_info.machine << std::endl;
+    std::cout << std::left << CYAN << " OS:       " << WHITE << uname_info.sysname << " " << uname_info.machine << std::endl;
     return 0;
 }
 static std::string *kernel()
 {
     struct utsname uname_info;
     if(uname(&uname_info)) exit(-1);
-     std::cout.width(50); std::cout << std::left << CYAN << "Kernel:   " << WHITE << uname_info.release << std::endl;
+    std::cout << std::left << CYAN << " Kernel:   " << WHITE << uname_info.release << std::endl;
     return 0;
 }
+
 size_t ram()
 {
     char* ram;
@@ -95,7 +83,7 @@ size_t ram()
     
     fclose(fp);
 
-     std::cout.width(50); std::cout << std::left << CYAN << "Ram:      " << WHITE << ram << std::endl;
+    std::cout << std::left << CYAN << " Ram:      " << WHITE << ram << std::endl;
 
     return 0;
 }
@@ -108,27 +96,10 @@ static void uptime()
     double uptime;
     fscanf(file, "%lf", &uptime);
     fclose(file);
-    std::cout.width(50); std::cout << std::left << CYAN << "\x1b[" << "Uptime:   " <<  WHITE << round(uptime / 60) << " mins" << std::endl;
+    std::cout << std::left << CYAN << " Uptime:   " <<  WHITE << round(uptime / 60) << " mins" << std::endl;
 }
 
-std::string info[] = { 
-"            ~+",
-"",
-"                 *       +",
-"           '                  |", 
-"       ()    .-.,='``'=.    - o -", 
-"             '=/_       \\     |",
-"          *   |  '=._    |",
-"               \\     `=./`,        '",
-"            .   '=.__.=' `='      *",
-"   +                         +",
-"        O      *        '       .",
-"                    .\t",
-};
-
 int main() {
-    int size = sizeof(info) / sizeof(info[0]);
-    printout(info, size);
     name();
     get_os();
     kernel();
