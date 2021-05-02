@@ -15,20 +15,6 @@
 struct utsname uname_info;
 char *username, *shellname;
 long uptimeHour, uptimeMin;
-std::string info[] = { 
-"            ~+",
-"",
-"                 *       +",
-"           '                  |", 
-"       ()    .-.,='``'=.    - o -", 
-"             '=/_       \\     |",
-"          *   |  '=._    |",
-"               \\     `=./`,        '",
-"            .   '=.__.=' `='      *",
-"   +                         +",
-"        O      *        '       .",
-"                    .",
-};
 
 void printout(std::string array[], int size)
 {
@@ -39,14 +25,14 @@ void printout(std::string array[], int size)
         std::cout << std::endl;
         return;
     }
-    std::cout << array[i] << "\n";
+    std::cout << array[i] << std::endl;
     i++;
     printout(array, size);
 }
 static std::string *name()
 {
     username = cuserid(username);
-    std::cout << CYAN << "User:     " <<  WHITE << username << std::endl;
+    std::cout.width(50); std::cout << std::left << CYAN << "User:     " <<  WHITE << username << std::endl;
     return 0;
 }
 
@@ -57,14 +43,14 @@ static std::string *shell()
 	if (slash) {
 		shellname = slash + 1;
 	}
-    std::cout << CYAN << "Shell:    " << WHITE << shellname << std::endl;
+    std::cout.width(50); std::cout << std::left << CYAN << "Shell:    " << WHITE << shellname << std::endl;
     return 0;
 }
 static std::string *editor()
 {
     const char* editor = std::getenv("EDITOR");
     if (editor && *editor) editor = basename(editor);
-        std::cout << CYAN << "Editor:   " << WHITE << editor << std::endl;
+        std::cout.width(50); std::cout << std::left << CYAN << "Editor:   " << WHITE << editor << std::endl;
     return 0;
 }
 
@@ -72,14 +58,14 @@ static std::string *get_os()
 {
     struct utsname uname_info;
     if(uname(&uname_info)) exit(-1);
-    std::cout << CYAN << "OS:       " << WHITE << uname_info.sysname << " " << uname_info.machine << std::endl;
+     std::cout.width(50); std::cout << std::left << CYAN << "OS:       " << WHITE << uname_info.sysname << " " << uname_info.machine << std::endl;
     return 0;
 }
 static std::string *kernel()
 {
     struct utsname uname_info;
     if(uname(&uname_info)) exit(-1);
-    std::cout << CYAN << "Kernel:   " << WHITE << uname_info.release << std::endl;
+     std::cout.width(50); std::cout << std::left << CYAN << "Kernel:   " << WHITE << uname_info.release << std::endl;
     return 0;
 }
 size_t ram()
@@ -109,7 +95,7 @@ size_t ram()
     
     fclose(fp);
 
-    std::cout << CYAN << "Ram:      " << WHITE << ram << std::endl;
+     std::cout.width(50); std::cout << std::left << CYAN << "Ram:      " << WHITE << ram << std::endl;
 
     return 0;
 }
@@ -122,8 +108,23 @@ static void uptime()
     double uptime;
     fscanf(file, "%lf", &uptime);
     fclose(file);
-    std::cout << CYAN << "Uptime:   " <<  WHITE << round(uptime / 60) << " mins" << std::endl;
+    std::cout.width(50); std::cout << std::left << CYAN << "\x1b[" << "Uptime:   " <<  WHITE << round(uptime / 60) << " mins" << std::endl;
 }
+
+std::string info[] = { 
+"            ~+",
+"",
+"                 *       +",
+"           '                  |", 
+"       ()    .-.,='``'=.    - o -", 
+"             '=/_       \\     |",
+"          *   |  '=._    |",
+"               \\     `=./`,        '",
+"            .   '=.__.=' `='      *",
+"   +                         +",
+"        O      *        '       .",
+"                    .\t",
+};
 
 int main() {
     int size = sizeof(info) / sizeof(info[0]);
